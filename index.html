@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .cardContainer{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content:center;
+        }
+        .cards {
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 5px;
+            width: 100px;
+            height: 150px;
+            background-color: #fff;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        // For at eventListenerene mine skulle virke måtte jeg legge hele scripten inn slik at DOM
+        // er lastet inn før eventListenerene. 
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Model
+
+            //Her lager jeg arrays for både type kort og kortets verdi.
+            const cardTypes = ["Hjerter", "Ruter", "Kløver", "Spar"];
+            const values = ["Ess", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Knekt", "Dronning", "Konge"];
+            let deck = [];
+            let hand = [];
+
+            // View
+            const appElement = document.getElementById('app');
+            appElement.innerHTML = /*HTML*/`
+            <h1>Kortstokk App</h1>
+            <button id="shuffleBtn">Lag og bland kortstokken</button>
+            <button id="drawBtn">Trekk 5 kort</button>
+            <div id="hand" class="cardContainer"></div>
+            `;
+
+            // Legge til eventListeners til knappene mine:
+            document.getElementById('shuffleBtn').addEventListener('click', () => {
+                createDeck();
+                shuffleDeck();
+                alert('Kortstokken er shufflet');
+            });
+
+            document.getElementById('drawBtn').addEventListener('click', () => {
+                drawCards();
+            });
+
+            // Controller
+
+            // Funksjon som lager selve decket med kort.
+            function createDeck() {
+                for (let cardType of cardTypes) {
+                    for (let value of values) {
+                        deck.push(`${value} av ${cardType}`);
+                    }
+                }
+            }
+
+            // Funksjon for å stokke kortstokken/decket
+            function shuffleDeck() {
+                for (let index = deck.length - 1; index > 0; index--) {
+                    const index2 = Math.floor(Math.random() * (index + 1));
+                    [deck[index], deck[index2]] = [deck[index2], deck[index]];
+                }
+            }
+
+            // Funksjon for å trekke 5 tilfeldige kort
+            function drawCards() {
+                if (deck.length < 5) {
+                    alert("Ikke nok kort igjen i kortstokken");
+                    return;
+                }
+                hand = deck.splice(0, 5);
+                displayHand();
+            }
+
+            // Funksjon for å vise hvilke kort du har på hånden
+            function displayHand() {
+                const handElement = document.getElementById("hand");
+                handElement.innerHTML = "";
+
+                const cardContainer = document.createElement('div');
+                cardContainer.classList.add('cardContainer');
+
+                for (let card of hand) {
+                    const cardElement = document.createElement("div");
+                    cardElement.textContent = card;
+                    cardElement.classList.add('cards');
+                    handElement.appendChild(cardElement);
+                }
+
+                handElement.appendChild(cardContainer);
+            }
+        });
+    </script>
+</body>
+</html>
